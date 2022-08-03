@@ -4,17 +4,21 @@ resource "random_id" "instance_id" {
  byte_length = 8
 }
 
+locals {
+   instance_name = "${var.instance_prefix}-${random_id.instance_id.hex}"
+}
+
 // A single Google Cloud Engine instance
 resource "google_compute_instance" "default" {
- name         = "gcp-cloud-${random_id.instance_id.hex}"
- machine_type = "f1-micro"
+ name         =  "${local.instance_name}"
+ machine_type = "${var.machine_type}"
  zone         = "${var.gcp_region}"
 
 # tags = ["http-server","https-server"] #uncomment to allow 80 and or 443
 
  boot_disk {
    initialize_params {
-     image = "debian-cloud/debian-9"
+     image = "${var.boot_os_image}"
    }
  }
 
